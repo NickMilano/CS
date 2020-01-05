@@ -1,0 +1,61 @@
+Question 1: 
+	Parent
+	  |
+	Child 1
+	  |
+	Child 2
+	  |
+	Cihld 3
+There are 4 processes in total, the parent and 3 children.
+The parent creates the first child and since the fork is successful
+the if statement will recieve a positive value and will break then print.
+However this first child that is created will get a value of 0 in the if
+statement which will cause it not to break and i will increment. This
+process repeats and Child 1 creates Child 2, then Child 2 will create
+Child 3, and at this point the for loop will exit. (i=n)
+
+Question 2:
+	Parent
+  /    /      \   \
+C1    C2      C3   C4
+There are 5 proccesses in total, the parent and 4 children.
+The parent will create all 4 child proccesses, since the if
+statement is checking for a fork() return that is <= 0 fork()
+will return the pid for the child whereas the child process will
+have a 0, then break and print its output. But the parent will continue
+the loop until i=4 (4 loops in total 0->3, which gives us the 4 children.
+
+Question 3:
+	Parent
+     /    |    \
+    C1   C2    C4
+   /  \   |   
+  C3  C6  C7
+  |
+  C5
+There are 8 proccesses in total, the initial parent and 7 children
+In this the loop will only break if a child is not made fork()==-1.
+This means on the first loop the parent will create its first child,
+and they will both go to the top of the loop, variable i used for 
+the loop is copied into the child so they will all exit the loop at the
+same time. Except on the next loop pass both the original parent and
+the first child will create childs (depending on speed they may create
+in different orders) for my example the parent 
+creates child 2 on the 2nd loop
+and child 1 creates child 3 on the second loop. 
+Once again we loop back to the top
+except we now have the parent and the 3 children 
+that will all create another child
+process this loop, once again depending on the speed 
+this will create children 4 through 7
+after this loop we meet the loop condition and exit the loop 
+giving us 7 children and the inital parent.
+
+Question 4:
+Since i is increasing and part of the function we use is
+1+(1.0/i), the value of (1.0/i) will get very small, we are
+using a double to store  this calculation which only has precision
+to 15 decimal digits, meaning at some point the calculation gets cut
+off and becomes = to 0, so instead of having (1.0/i) equal to a very large
+number it becomes 0 and we are only doing 1+(0) to whatver power,
+which is equal to 1.

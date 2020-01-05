@@ -1,0 +1,55 @@
+Question 1:
+No there are no race conditions, the only way a race condition could
+occur would be if the odd pass started while the even pass was still
+in progressm however in the implementation we specifically wait for
+all threads in the even pass to complete before moving to the odd pass.
+
+Question 2:
+To prove this sort takes no more than n iterations to sort an array of
+n numbers we can look at the worst case scenario, which is when the 
+largest value is in the first element of the array and the smallest number
+is the last element in the array, and every other element is in order.
+Ex [4,2,3,1],  on the even pass thread1 compares 4 and 2 and swaps
+and thread 3 compares 3 and 1 and swaps, giving us [2,4,1,3], odd pass
+thread2 would compare 4 and 1 and swap them giving us [2,1,4,3] after
+the first iteration. On iteration 2 the even threads will swap again
+giving the final sorted array of [1,2,3,4], and the odd pass will
+make no swaps. However in the implementation we must iterate one more
+time since there was still changes made in this iteration. So after
+iteration 3 we break from the loop giving us n-1 iterations in worst case.
+This is also proof that the algo does sort correctly. If we wanted a case
+where the iterations were = to n we could look at the case of n = 2 with
+a simple array of [2,1], in this case there would only be one thread ran
+on the even pass and it would swap 2 and 1, on the 2nd iteration no changes
+would be made so it will break, leaving us with a final array of [1,2] and
+total iterations of 2.
+
+Question 3:
+I think it would be possible, if we created the n/2 threads at the beginning
+of each iteration, after completing the even pass some busy waiting could be
+implemented since the threads run relatively quick as they are just making
+one comparison then poterntially swapping. We could simply add another
+variable in the threads that would store k+1 along with the k-1 so we would
+know where to index. After the busy waiting the threads could do the odd pass
+then the threads would join/exit after they finish both
+the even and odd pass. This would be the same as creating threads for
+both passes and should work in the same fashion but with faster speeds as
+there is less time creating threads etc. For busy waiting we could do
+something simple such as a global variable that is = n/2, and after each
+pass the thread would decrease it by 1 and sit in a while loop until
+this variable becomes 0, there could be seperate variables for both the 
+even and odd pass that could be reset at the beginning of each iteration
+in main.
+
+Question 4:
+I believe this would be possible as well, using the modified thread example
+from question 3 where the thread completes both an even and odd pass in the
+same iteration, I think the thread could also be passed the size of the array
+n when it is created, then simply move the while loop into the thread
+implementation. It would also need busy waiting after the odd pass and it
+would also need to do the flag checking logic in each thread. This way each
+thread can loop up to n times after being created initially, and due to the
+waiting there should be no race conditions between each of the passes. Many
+of the variables would have to also be managed within the thread
+implementation instead of the main passing the variables to the new threads
+on each iteration.

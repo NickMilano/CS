@@ -1,0 +1,13 @@
+Question 1)
+The most challenging part of the assignment was coming up with a way
+to have the server recognize when the client had sent its last message
+for that paticular string.
+
+Question 2)
+It would not be that effective since we are using UDP anytime we have
+an unreliable network there would be a good chance not all the packets
+would make it where they need to go or possibly in an order we did not want
+
+Question 3)
+By using TCP the program could be more reliable over networks that arent as 
+stable as we might like

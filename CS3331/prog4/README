@@ -1,0 +1,70 @@
+Question 1:
+The semaphore Queue is initialized to the number of babies
+that was given through command line args. Babies must pass
+through the queue in order to eat so at most m babies can
+be in line to eat.
+
+Question 2:
+The semaphore Food is initialized to 0 so when a baby sees there is no food
+it signal the mother then blocks itself, it is released when the mother 
+is done filling all pots. If there are no pots open the baby is simply
+blocked by the queue sempahore as explained in Q1.
+
+Question 3:
+After a baby passes through the queue and obtains the mutex it check if
+the food pot counter is > 0, if it is then the baby will eat.
+
+Question 4:
+If the baby is hungry and there is no full feeding pot then it is blocked
+similar to Q2, it is not possible for the baby to get a feeding pot if
+there is none left.
+
+Question 5:
+When each hungry baby gets access to the mutex it eats from the feeding pot
+at the position of the counter. Since the baby will decrease the pot count
+before leaving the mutex the next baby cannot eat from the same pot as the
+last baby.
+
+Question 6:
+The signal to wake up the mother is part of the mutex where only one baby
+can be at a time. After signalling the mother the baby is blocked and 
+must wait for the mother to be done so no other babies can enter the mutex
+at this time.
+
+Question 7:
+The way the mother thread works as soon as it begins the mother goes to sleep
+meaning she is waiting until the first baby is able to enter the mutex and
+see that all food pots are empty.
+
+Question 8:
+When the mother is preparing food this means one baby has signalled all the
+pots are empty and is blocked in the mutex. This baby is not released until
+the mother is done preparing food. After the mother is done it must wait
+some random time after releasing the babies so it is possible for the
+babies to go eat all the food and try to wake up the mother again, but
+nothing will happen until she goes to take a nap.
+
+Question 9:
+The baby that sees there is no food left will signal the mother and be blocked
+until the mother fills all m feeding pots. After they are filled then the
+baby is unblocked and they can begin eating.
+
+Question 10:
+After the mother is done filling all the feeding pots it calls food_ready()
+which opens up m spots in the Queue for hungry babies to enter. Then when
+mother loops around it will go back to sleep.
+
+Question 11:
+The way I implemented this was using a global variable done, which was set
+to 0 initially to show the mother is not done. After the t feedings done would
+be set to 1 to show the mother is done. Inside the baby function ready_to_eat()
+it checks if done is set to 1 or not, if the mother is done it enters a 
+seperate if statement and checks if there is food left (potCount) and if there
+is still food left the baby will eat release the mutex and signal the queue 
+then return, we signal queue to continue letting babies in as the mother is
+not signalling the babies in now. If there is no food left then the baby
+releases the mutex and signals the queue again but this time it calls Exit()
+So babies will continue to eat until there is no food left then they will exit. 
+It is possible for babies to still be waiting for food as if potcount = 0 and
+babies are signalling the queue to let hungry babies in they will not be 
+getting food and they will simply exit without eating.

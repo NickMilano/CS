@@ -1,0 +1,4 @@
+dealer should be fully functional when it comes to dealing
+cards, sending them to the players, and recieving them. Ties should
+also be accounted for but there may be some weird cases that could break the 
+tie logic, but from my testing it can solve most ties,

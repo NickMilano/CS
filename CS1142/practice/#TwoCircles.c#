@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int main(int argc, char**argv) {
+  
+  if(argc < 7) {
+    printf("TwoCircles <x1> <y1> <r1> <x2> <y2> <r2>\n");
+    return 0;
+  }
+
+  //Initializing Variables
+  double x1 = atof(argv[1]);
+  double y1 = atof(argv[2]);
+  double r1 = atof(argv[3]);
+  double x2 = atof(argv[4]);
+  double y2 = atof(argv[5]);
+  double r2 = atof(argv[6]);
+
+  printf("Circle 1: (%.2  printf("%s %s!\n", argv[1], argv[4]);
+f, %.2f) r = %.2f\n", x1, y1, r1);

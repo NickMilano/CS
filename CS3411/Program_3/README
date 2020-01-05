@@ -1,0 +1,13 @@
+Overall the server and client work together as described.
+When the server starts it will create a socket including a random port
+and this port will be written to stdout.
+The server will not close until it recieves SIGINT.
+The client should easily pair with the server as long as
+the correct arguments are passed. Can connect as many clients as wanted.
+For testing there was a case that I found issues with, if the client runs
+ls as a lone command with no args (usually this should work) however if other
+clients have had created files or directories on the server it will not work
+however running ls . will work, I tested making directories and files from the client
+and that seems to work fine.
+On compilation there were some warnings from the original code but it just had to do
+with the types in some of the calls.

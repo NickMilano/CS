@@ -1,0 +1,103 @@
+Question 1:
+The logic of this program is fairly straightforward, when it starts
+we create a MasterThread that will create the first PrimeThread
+P2, then handle sending all the numbers to P2 up to the given number
+through the command line args. P2 and all other PrimeThreads function
+in the same way, when they are created the store their ID which will
+be the prime number they are "memorizing" then create a synch channel
+between itself and the thread before it. This creates a chain where
+Master will send values to P2 then P2 to the next PrimeThread and so on.
+Each PrimeThread functions by waiting for the next value then checking
+if it is divisible by the prime number it has stored. If the value
+is divisible by the prime number with no remainder then it violates
+the rule of being a prime number and it is just thrown away. Ex 4 is divisible
+by 2 so P2 would throw 4 away. If the number is not evenly divisible by the
+prime number stored then it is considered a prime up to this point and it is
+passed to the next PrimeThread and the check is performed again. This occurs
+until the number reaches the last PrimeThread, if the number passes the check
+again then it is a prime number and the last PrimeThread will create a new
+PrimeThread with this number. This repeats up to the max number provided to
+the MasterThread. After the MasterThread is done sending all the numbers
+it will send END which causes a break inside the PrimeThreads, who will
+then pass END to its neighbor until we once again reach the last PrimeThread
+who has no neighbor then it will Exit(), allowing all previous PrimeThreads
+to Exit(), then the MasterThread prints out the results from the global array
+and Exits as well.
+
+Question 2:
+The program works because of the Synchronous channels, this is because both
+the send and receive are blocking meaning if one thread wants to send a number
+it must block until the receiving thread is ready to receive it, on the flip
+side if a thread wants to receive a number it must wait for the sender to send
+it, so no numbers are lost.
+
+Question 3:
+Discussing the uses of each variable -
+Primes - global array used to store each prime number we discover
+END - used as an END condition to be sent to prime threads
+buff - used for printing purposes
+MasterThread numbers - stores the max value of the numbers to loop to, allows
+the master to break from its loop when we have sent the last value.
+PrimeThread threadID - used for printing purposes and to reference our own
+threadID which is the prime number we have
+PrimeThread arrayPos - counting variable that allows a primethread to store
+its prime number in the correct position in the global array
+PrimeThread prevID - stores the previous prime threads ID which allows a new
+thread to create a channel between itself and that previous thread
+PrimeThread neighbor - points to the prime thread that we will be sending
+our values to
+PrimeThread channel - channel we will use to receive or send to
+
+Question 4:
+Part 1:
+I do not think this program could be done with Asynchronous channels, at least
+not easily. Since Asynchronous channels have non blocking sends this means if
+any of the threads run faster than the one that is receiving their numbers
+it is possible it could send multiple values before the first one is received
+which would be an issue. For easiest example would to look at the MasterThread
+and P2 at the start of an execution, the first number that is sent to P2 is
+always 3 which is prime, so in this scenario P2 would be doing some extra work
+Master has plenty of time to send more numbers to P2, but since Asynchronous
+channels do not block the sender Master could send 4 5 6 7, and when P2 goes
+to receive we lose valuable numbers as it will only read in 7, meaning prime
+number 5 is lost. I think it would be possible to use some sort of global array
+to indicate if a thread is able to send or not along with some logic behind it
+but this would go outside the specs of the assignment.
+
+Part 2:
+When the last thread in the chain recieves a number greater than it has we know
+it is a prime because of the way prime numbers work. In order for a number to
+be prime it must only be divisible by 1 and itself. So if a number comes to us
+we know it is not divisible evenly by any of the numbers before us, and the
+same is true for the number we have. This means the number we have just
+received can not be any multiple of any previous number and this include a
+multiple of our stored number as if it was a multiple of our stored number then
+a previous thread would have discarded this number. Example - we have primes
+2 3 5 and 7 stored, we know the next prime will be 11 but for example if
+7 somehow received the number 8 this would cause a contradiction as 8 is a
+multiple of 2.
+
+Part 3:
+To fill the array Primes in a consecutive way I use a variable passed in the
+construction of each PrimeThread that is started at 0 (P2), to indicate the
+start of the array. Then when each following PrimeThread is created we pass
+it our position in the array + 1, so each new PrimeThread will store its
+number into the next position.
+
+Part 4:
+By the same logic as part 3 since each thread is storing its value into one
+specific part of the array we have no worries that there will be overlap. So
+although they are accessing some shared resource it is not in fashion that can
+cause an issue.
+
+Question 5:
+The way we guarantee master will print the last 3 lines is that once we have
+sent all the numbers specified, we will send END to P2 then Join() with P2
+meaning we must wait till P2 finishes to continue executing, when P2
+receives END it must send it to its neighbor (if it has one) then Join() with
+its neighbor, so P2 must wait for its neighbor to complete, this continues
+until we reach the last thread that has no neighbor and it simply can just
+Exit(), this allows the thread before it to Exit() all the way until we reach
+P2 and P2 can Exit(). This means Master is allowed to run and all other threads
+have completed which guarantees that it will be able to print the last 3 lines
+without any sort of interrupt.
